@@ -10,6 +10,7 @@ class UserTestCase(TestCase):
     def setUp(self):
         User.objects.create(
             username="sonic_user",
+            email='sonic_user@sonic.com',
             first_name="First",
             last_name="User",
             date_of_birth=date(2000, 10, 9),
@@ -17,6 +18,7 @@ class UserTestCase(TestCase):
         )
         User.objects.create(
             username="sonic_user_again",
+            email='sonic_user_again@sonic.com',
             first_name="Second",
             last_name="User",
             date_of_birth=date(1999, 10, 9),

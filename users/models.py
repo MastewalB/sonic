@@ -38,6 +38,7 @@ class UserManager(BaseUserManager):
 class User(AbstractBaseUser):
     # TODO - userId field
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    email = models.EmailField(unique=True)
     username = models.CharField(max_length=20)
     first_name = models.CharField(max_length=30)
     last_name = models.CharField(max_length=30)
@@ -47,7 +48,7 @@ class User(AbstractBaseUser):
     is_active = models.BooleanField(default=True)
 
     USERNAME_FIELD = 'id'
-    EMAIL_FIELD = None
+    EMAIL_FIELD = 'email'
     REQUIRED_FIELDS = ['first_name', 'date_of_birth', 'country']
     objects = UserManager()
 
