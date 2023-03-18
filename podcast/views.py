@@ -4,6 +4,7 @@ from rest_framework.views import APIView
 from rest_framework import serializers, status
 from rest_framework.generics import ListAPIView
 from rest_framework.pagination import PageNumberPagination
+from rest_framework.permissions import IsAuthenticated
 from podcast.models import Podcast, Episode, PodcastSubscription
 from podcast.serializers import PodcastSerializer, EpisodeSerializer, SubscriptionSerializer
 
@@ -22,6 +23,8 @@ class PodcastView(APIView):
 
 
 class SubscriptionView(APIView):
+    permission_classes = [IsAuthenticated]
+
     def post(self, request):
 
         serializer = SubscriptionSerializer(data=request.data)
@@ -57,10 +60,12 @@ class SubscriptionView(APIView):
 
 
 class SubscriptionListView(ListAPIView):
+    permission_classes = [IsAuthenticated]
+
     serializer_class = SubscriptionSerializer
     pagination_class = PageNumberPagination
 
     def get(self):
-        user_id = self.request.query_params.get('user_id', None)
+        user_id = self.request.user.id
         queryset = PodcastSubscription.objects.filter(user=user_id)
         return queryset
