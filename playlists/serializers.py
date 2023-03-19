@@ -1,8 +1,12 @@
 from rest_framework import serializers
-from playlists.models import Playlist
+from playlists.models import Playlist, PlaylistItems
 
 class PlaylistSerialier(serializers.ModelSerializer):
     class Meta:
         model = Playlist
-        fields = ['created_by', 'songItem', 'podcast_item', 'playlist_title']
-        
+        fields = ['created_by', 'playlist_id', 'playlist_title']
+
+class PlaylistItemsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PlaylistItems
+        fields = ['playlist_id', 'song_id']
