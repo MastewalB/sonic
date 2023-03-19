@@ -12,7 +12,8 @@ class Album(models.Model):
 	cover = models.URLField(blank=True)
 
 class Song(models.Model):
-	title = models.CharField(max_length="25")
+	title = models.CharField(max_length="35")
 	s_artist = models.ForeignKey(Artist, on_delete = models.CASCADE)
 	s_album = models.ForeignKey(Album, on_delete = models.CASCADE)
-
+	song_file = models.FileField(upload_to='songs/')
+	content_type = models.CharField(max_length=50)
