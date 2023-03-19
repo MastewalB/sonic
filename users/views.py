@@ -31,7 +31,7 @@ class SignupView(APIView):
             serializer.save()
             user = User.objects.get(email=email)
             token = Utils.enconde_token(user)
-            if not activateEmail(request, user, user.email):
+            if activateEmail(request, user, user.email):
                 return Response(
                     {
                         'data': serializer.data,
