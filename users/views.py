@@ -4,7 +4,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from users.serializers import UserSerializer, LoginSerializer
 from users.utils import Utils
-
+from users.models import User
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser, IsAuthenticatedOrReadOnly
 
 # Create your views here.
@@ -45,7 +45,7 @@ class LoginView(APIView):
 
         return Response(
             {
-                "data": serializedUser.data,
+                "data": serialized_user.data,
                 "token": token
             }
         )
