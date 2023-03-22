@@ -72,6 +72,8 @@ TEMPLATES = [
     },
 ]
 
+AUTHENTICATION_BACKENDS = ['django.contrib.auth.backends.ModelBackend',]
+
 WSGI_APPLICATION = 'sonic.wsgi.application'
 
 REST_FRAMEWORK = {

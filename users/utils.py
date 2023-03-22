@@ -9,7 +9,7 @@ import os
 class Utils:
 
     @staticmethod
-    def enconde_token(user: User):
+    def enconde_token(user):
         payload = {
             'id': user.id,
             'is_staff': user.is_staff
@@ -22,12 +22,14 @@ class Utils:
         }
 
     @staticmethod
-    def authenticate_user(validated_data):
+    def authenticate_user(request, validated_data):
         email = validated_data['email']
         password = validated_data['password']
 
-        user = User.objects.filter(email=email)
-        if user and authenticate(request, email=email, password=password):
+        user = User.objects.filter(email=email).first()
+        print("Aaaaaaaaaggnngn", user.id)
+        if user and authenticate(email=email, password=password):
             return user
 
-        return serializers.ValidationError("Invalid Email or Password")
+        # if not user or
+        raise serializers.ValidationError("Invalid Email or Password")
