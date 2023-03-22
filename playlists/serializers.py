@@ -4,7 +4,9 @@ from playlists.models import Playlist, PlaylistItems
 class PlaylistSerializer(serializers.ModelSerializer):
     class Meta:
         model = Playlist
-        fields = ['created_by', 'playlist_id', 'playlist_title']
+        fields = ['playlist_title']
+
+        read_only_fields = ['created_by', 'id']
 
 class PlaylistItemsSerializer(serializers.ModelSerializer):
     class Meta:
