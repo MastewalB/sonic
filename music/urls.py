@@ -15,8 +15,8 @@ router.register(r'artists', ArtistViewSet, basename='artists')
 router.register(r'songs', SongViewSet, basename='songs')
 
 urlpatterns = [
-    path('albums/<int:pk>/', AlbumGetViewSet.as_view(), name='album-get'),
-    path('artists/<int:pk>/', ArtistGetViewSet.as_view(), name='artist-get'),
-    path('songs/<int:pk>/', SongGetViewSet.as_view(), name='song-get'),
+    path('albums/<int:pk>/', AlbumGetViewSet.as_view({'get': 'list'}), name='album-get'),
+    path('artists/<int:pk>/', ArtistGetViewSet.as_view({'get': 'list'}), name='artist-get'),
+    path('songs/<int:pk>/', SongGetViewSet.as_view({'get': 'list'}), name='song-get'),
     path('', include(router.urls)),
 ]

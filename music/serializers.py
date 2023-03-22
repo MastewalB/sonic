@@ -4,16 +4,16 @@ from music.models import Artist, Album, Song
 class ArtistSerializer(serializers.ModelSerializer):
     class Meta:
         model = Artist
-        fields = ['name', 'picture']
+        fields = ['id', 'name', 'picture']
 
 
 class AlbumSerializer(serializers.ModelSerializer):
     class Meta:
         model = Album
-        fields = ['artist', 'name', 'cover']
+        fields = ['id', 'artist', 'name', 'cover']
 
 
 class SongSerializer(serializers.ModelSerializer):
     class Meta:
         model = Song
-        fields = ['title', 's_artist', 's_album', 's_url']
+        fields = ['id', 'title', 's_artist', 's_album', 'song_file', 'content_type']
