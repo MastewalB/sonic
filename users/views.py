@@ -27,7 +27,7 @@ class SignupView(APIView):
 
         serializer = UserSerializer(data=data)
         if serializer.is_valid():
-            serializer()
+
             serializer.save()
             user = User.objects.get(email=email)
             token = Utils.enconde_token(user)
@@ -96,16 +96,23 @@ class LoginView(APIView):
 
         serializer.is_valid(raise_exception=True)
 
-        user = Utils.authenticate_user(serializer.validated_data)
-        serialized_user = UserSerializer(user)
-        token = Utils.enconde_token(user)
+        try:
+            user = Utils.authenticate_user(serializer.validated_data)
+            serialized_user = UserSerializer(user)
+            token = Utils.enconde_token(user)
 
-        return Response(
-            {
-                "data": serializedUser.data,
-                "token": token
-            }
-        )
+            return Response(
+                {
+                    "data": serialized_user.data,
+                    "token": token
+                }
+            )
+        except serializers.ValidationError:
+            return Response(
+                {
+                    "message": "Invalid Email or Password"
+                }
+            )
 
 
 class UpdateProfileView(APIView):
