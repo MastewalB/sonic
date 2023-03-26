@@ -7,12 +7,12 @@ from django.http import StreamingHttpResponse
 class SongViewSet(viewsets.ModelViewSet):
     queryset = Song.objects.all()
     serializer_class = SongSerializer
-    permission_classes = [permissions.IsAdminUser]
+    # permission_classes = [permissions.IsAdminUser] 
 
 class SongGetViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Song.objects.all()
     serializer_class = SongSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    # permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
         return self.queryset
@@ -28,25 +28,25 @@ class SongGetViewSet(viewsets.ReadOnlyModelViewSet):
 class AlbumGetViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Album.objects.all()
     serializer_class = AlbumSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    # permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
         return self.queryset
 class AlbumViewSet(viewsets.ModelViewSet):
     queryset = Album.objects.all()
     serializer_class = AlbumSerializer
-    permission_classes = [permissions.IsAdminUser]
+    # permission_classes = [permissions.IsAdminUser]
 
 #####  Artist  ######
 class ArtistViewSet(viewsets.ModelViewSet):
     queryset = Artist.objects.all()
     serializer_class = ArtistSerializer
-    permission_classes = [permissions.IsAdminUser]
+    # permission_classes = [permissions.IsAdminUser]
 
 class ArtistGetViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Artist.objects.all()
     serializer_class = ArtistSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    # permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
         return self.queryset
