@@ -1,6 +1,20 @@
 from rest_framework import serializers
 from playlists.models import Playlist, PlaylistItems
 
+class CreatePlaylistSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Playlist
+        fields = ['created_by', 'playlist_title', 'id']
+    
+    def create(self, validated_data):
+        playlist = Playlist(
+            created_by=validated_data['created_by'],
+            playlist_title=validated_data['playlist_title']
+        )
+
+        playlist.save()
+        return playlist
+
 class PlaylistSerializer(serializers.ModelSerializer):
     class Meta:
         model = Playlist
