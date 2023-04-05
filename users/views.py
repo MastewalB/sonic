@@ -26,7 +26,7 @@ class SignupView(APIView):
 
         serializer = UserSerializer(data=data)
         if serializer.is_valid():
-
+            
             serializer.save()
             user = User.objects.get(email=email)
             token = Utils.enconde_token(user)
@@ -67,6 +67,7 @@ def activateEmail(request, user, to_email):
         mail_subject, message, to=[to_email]
     )
     if email.send():
+        print("dfjhskjfhdljfhweiufhieusjhfieu")
         return True
     return False
 
