@@ -5,10 +5,10 @@ from users.models import User
 
 
 class Follow(models.Model):
-    follower = models.ForeignKey(User, on_delete=models.CASCADE)
-    followee = models.ForeignKey(User, on_delete=models.CASCADE)
+    follower = models.ForeignKey(User, on_delete=models.CASCADE, related_name="follower")
+    followee = models.ForeignKey(User, on_delete=models.CASCADE, related_name="followee")
 
     class Meta:
         constraints = [
-            models.UniqueConstraint(fields=['follower', 'followee'])
+            models.UniqueConstraint(fields=['follower', 'followee'], name='unique_follower_name')
         ]
