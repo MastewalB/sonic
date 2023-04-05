@@ -27,9 +27,7 @@ class Utils:
         password = validated_data['password']
 
         user = User.objects.filter(email=email).first()
-        print("Aaaaaaaaaggnngn", user.id)
-        if user and authenticate(email=email, password=password):
+        if user and user.check_password(password):
             return user
 
-        # if not user or
         raise serializers.ValidationError("Invalid Email or Password")
