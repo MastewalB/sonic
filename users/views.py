@@ -83,10 +83,13 @@ def activate(request, uidb64, token):
     if user is not None and default_token_generator.check_token(user, token):
         user.is_active = True
         user.save()
-        # TODO Successfully activated please login on the app
+        context = {
+            'title': 'Welcome to Sonic',
+            'body': ''
+        }
+        return render(request, 'activation_template.html', context)
     else:
-        # TODO - handle invalid activation token
-        return
+        return render(request, 'template_activation_error.html')
 
 
 class LoginView(APIView):
