@@ -14,7 +14,6 @@ from users.utils import Utils
 from users.models import User
 from django.http import HttpResponse
 from django.template import loader
-
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser, IsAuthenticatedOrReadOnly
 
 # Create your views here.
