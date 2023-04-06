@@ -6,7 +6,7 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.generics import ListAPIView
 from rest_framework.permissions import IsAuthenticated
 
-from follow.serializers import FollowSerializer
+from follow.serializers import FollowSerializer, FollowerListSerializer
 from follow.models import Follow
 
 # Create your views here.
@@ -18,6 +18,7 @@ class FollowView(APIView):
     def post(self, request):
         serializer = FollowSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
+        serializer.context['follower'] = request.user
         serializer.save()
 
         return Response(
@@ -25,12 +26,12 @@ class FollowView(APIView):
             status=status.HTTP_201_CREATED
         )
 
-    # def put(self, request):
-    #     follower = Follow.objects.filter(request.user.id)
 
     def delete(self, request):
         try:
+            follower = request.user
             follow = Follow.objects.filter(
+                follower=follower,
                 followee=request.data['followee_id'])
             follow.delete()
             return Response(
@@ -58,7 +59,7 @@ class FollowDetailView(APIView):
 
 
 class FollowDetailListView(ListAPIView):
-    serializer_class = FollowSerializer
+    serializer_class = FollowerListSerializer
     pagination_class = PageNumberPagination
 
     def get_queryset(self):
