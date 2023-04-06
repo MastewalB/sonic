@@ -9,7 +9,7 @@ import os
 class Utils:
 
     @staticmethod
-    def enconde_token(user):
+    def encode_token(user):
         payload = {
             'id': user.id,
             'is_staff': user.is_staff
@@ -22,7 +22,7 @@ class Utils:
         }
 
     @staticmethod
-    def authenticate_user(request, validated_data):
+    def authenticate_user(validated_data):
         email = validated_data['email']
         password = validated_data['password']
 
