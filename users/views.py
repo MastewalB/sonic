@@ -12,6 +12,8 @@ from rest_framework.response import Response
 from users.serializers import UserSerializer, LoginSerializer
 from users.utils import Utils
 from users.models import User
+from django.http import HttpResponse
+from django.template import loader
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser, IsAuthenticatedOrReadOnly
 
 # Create your views here.
@@ -81,10 +83,13 @@ def activate(request, uidb64, token):
     if user is not None and default_token_generator.check_token(user, token):
         user.is_active = True
         user.save()
-        # TODO Successfully activated please login on the app
+        context = {
+            'title': 'Welcome to Sonic',
+            'body': ''
+        }
+        return render(request, 'activation_template.html', context)
     else:
-        # TODO - handle invalid activation token
-        return
+        return render(request, 'template_activation_error.html')
 
 
 class LoginView(APIView):
@@ -124,6 +129,18 @@ class UpdateProfileView(APIView):
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+from django.shortcuts import render
+
+def my_template_view(request):
+    context = {
+        'title': 'My Page Title',
+        'body': 'Hello World'
+    }
+    return render(request, 'activation_template.html', context)
+
+def forgot_password_view(request):
+    
+    return render(request, 'password_template.html')
 
 # class ResetPasswordView(APIView)
 # class ForgotPasswordView(APIView)
