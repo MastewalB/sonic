@@ -5,11 +5,14 @@ from rest_framework.response import Response
 from playlists.serializers import PlaylistSerializer, PlaylistItemsSerializer, CreatePlaylistSerializer
 from playlists.models import Playlist, PlaylistItems
 from music.models import Song
+from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser, IsAuthenticatedOrReadOnly
 
 # Create your views here.
 
 
 class CreatePlaylistView(APIView):
+    permission_classes = [IsAuthenticated]
+
     def post(self, request):
         serializer = CreatePlaylistSerializer(data=request.data)
         serializer.context['created_by'] = request.user
@@ -30,6 +33,8 @@ class UserPlaylistView(APIView):
 
 
 class PlaylistView(APIView):
+    permission_classes = [IsAuthenticated]
+
     def get(self, request, playlist_id):
         items = PlaylistItems.objects.filter(playlist_id=playlist_id)
         serializer = PlaylistItemsSerializer(items, many=True)
@@ -51,6 +56,8 @@ class PlaylistView(APIView):
 
 
 class PlaylistItemsView(APIView):
+    permission_classes = [IsAuthenticated]
+
     def post(self, request):
         serializer = PlaylistItemsSerializer(data=request.data)
 
