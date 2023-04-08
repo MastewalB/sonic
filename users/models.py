@@ -44,7 +44,7 @@ class User(AbstractBaseUser):
     date_of_birth = models.DateField()
     country = models.CharField(max_length=30)
     is_staff = models.BooleanField(default=False)
-    is_active = models.BooleanField(default=True)
+    is_active = models.BooleanField(default=False)
 
     USERNAME_FIELD = 'id'
     EMAIL_FIELD = 'email'
@@ -66,3 +66,9 @@ class User(AbstractBaseUser):
 
     def __str__(self):
         return self.get_full_name()
+
+    def has_perm(self, perm, obj=None):
+        return self.is_staff
+
+    def has_module_perms(self, app_label):
+        return self.is_staff

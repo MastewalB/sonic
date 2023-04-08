@@ -1,11 +1,15 @@
+from django.shortcuts import render
+from django.contrib.auth.forms import AuthenticationForm
 from threading import Thread
 from base64 import urlsafe_b64decode, urlsafe_b64encode
 from django.core.mail import send_mail, EmailMessage
 from django.utils.encoding import force_bytes, force_str
 from django.contrib.sites.shortcuts import get_current_site
+from django.contrib.auth import login, authenticate
 from django.contrib.auth.tokens import default_token_generator
 from django.template.loader import render_to_string
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, redirect, get_object_or_404
+from django.views.generic import View
 from rest_framework import serializers, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -15,6 +19,8 @@ from users.models import User
 from django.http import HttpResponse
 from django.template import loader
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser, IsAuthenticatedOrReadOnly
+
+from users.forms import AdminLoginForm
 
 # Create your views here.
 
@@ -69,6 +75,7 @@ def activateEmail(request, user, to_email):
         mail_subject, message, to=[to_email]
     )
     if email.send():
+        print("dfjhskjfhdljfhweiufhieusjhfieu")
         return True
     return False
 
@@ -103,7 +110,7 @@ class LoginView(APIView):
         try:
             user = Utils.authenticate_user(serializer.validated_data)
             serialized_user = UserSerializer(user)
-            token = Utils.enconde_token(user)
+            token = Utils.encode_token(user)
 
             return Response(
                 {
@@ -120,16 +127,23 @@ class LoginView(APIView):
 
 
 class UpdateProfileView(APIView):
-    def put(self, request, id):
-        user = User.objects.get(id=id)
-        data = request.data.dict()
+    permission_classes = [IsAuthenticated]
+
+    def put(self, request):
+        user = None
+        try:
+            user = User.objects.get(id=request.user.id)
+        except User.DoesNotExist:
+            return Response(
+                status=status.HTTP_404_NOT_FOUND,
+            )
+        data = request.data
         serializer = UserSerializer(user, data=data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-from django.shortcuts import render
 
 def my_template_view(request):
     context = {
@@ -138,8 +152,9 @@ def my_template_view(request):
     }
     return render(request, 'activation_template.html', context)
 
+
 def forgot_password_view(request):
-    
+
     return render(request, 'password_template.html')
 
 # class ResetPasswordView(APIView)

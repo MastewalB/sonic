@@ -2,61 +2,92 @@ from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.response import Response
-from playlists.serializers import PlaylistSerializer, PlaylistItemsSerializer
+from playlists.serializers import PlaylistSerializer, PlaylistItemsSerializer, CreatePlaylistSerializer
 from playlists.models import Playlist, PlaylistItems
+from music.models import Song
+from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser, IsAuthenticatedOrReadOnly
 
 # Create your views here.
-class PlaylistView(APIView):
+
+
+class CreatePlaylistView(APIView):
+    permission_classes = [IsAuthenticated]
+
     def post(self, request):
-        serializer = PlaylistSerializer(data=request.data)
-        try:
-            serializer.is_valid(raise_exception=True)
-            # serializer.data['created_by'] = request.user
+        serializer = CreatePlaylistSerializer(data=request.data)
+        serializer.context['created_by'] = request.user
+        if serializer.is_valid():
             serializer.save()
+
             return Response(serializer.data)
-        except:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
-    
-    def get(self, request):
-        playlist_id = request.query_params['playlist-id']
+
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+class UserPlaylistView(APIView):
+    def get(self, request, user_id):
+        items = Playlist.objects.filter(created_by=user_id)
+        serializer = PlaylistSerializer(items, many=True)
+
+        return Response(data=serializer.data)
+
+
+class PlaylistView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, playlist_id):
         items = PlaylistItems.objects.filter(playlist_id=playlist_id)
         serializer = PlaylistItemsSerializer(items, many=True)
 
         return Response(data=serializer.data)
-    
-    def delete(self, request):
-        serializer = PlaylistSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
 
-        created_by = Playlist.objects.get(id=serializer.id).created_by
-        if created_by == request.data.created_by:
-            playlist = get_object_or_404(Playlist, playlist_id=serializer.data.playlist_id)
-            playlist.delete()
-
-            return Response(status= status.HTTP_204_NO_CONTENT)
-
-        return Response(status=status.HTTP_401_UNAUTHORIZED)
-
-class PlaylistItemsView(APIView):
-    def post(self, request):
-        serializer = PlaylistItemsSerializer(data=request.data)
+    def delete(self, request, playlist_id):
+        playlist = None
         try:
-            serializer.is_valid(raise_exception=True)
-            serializer.save()
-            return Response(serializer.data)
-        except:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+            playlist = Playlist.objects.get(id=playlist_id)
+        except Playlist.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
 
-    def delete(self, request):
-        serializer = PlaylistItemsSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        
-        playlist_item = PlaylistItems.objects.get(playlist_id=serializer.playlist_id, song_id=serializer.song_id)
-        created_by = Playlist.objects.get(id=playlist_item.playlist_id).created_by
-        if created_by == request.user.id:
-            playlistItem = get_object_or_404(PlaylistItems, playlist_id=serializer.data.playlist_id, song_id=serializer.data.song_id)
-            playlistItem.delete()
-
+        if playlist.created_by.id == request.user.id:
+            playlist.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
 
         return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+
+class PlaylistItemsView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        serializer = PlaylistItemsSerializer(data=request.data)
+
+        if serializer.is_valid():
+            playlist = None
+            try:
+                playlist = serializer.validated_data['playlist_id']
+                song = serializer.validated_data['song_id']
+            except (Playlist.DoesNotExist, Song.DoesNotExist) as error:
+                return Response(status=status.HTTP_404_NOT_FOUND)
+
+            if request.user.id != playlist.created_by.id:
+                return Response(status=status.HTTP_403_FORBIDDEN)
+
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request):
+        serializer = PlaylistItemsSerializer(data=request.data)
+        playlist_item = None
+        if serializer.is_valid():
+            playlist_item = PlaylistItems.objects.get(
+                playlist_id=serializer.validated_data['playlist_id'], song_id=serializer.validated_data['song_id'])
+
+            if request.user.id != serializer.validated_data['playlist_id'].created_by.id:
+                return Response(status=status.HTTP_403_FORBIDDEN)
+
+            playlist_item.delete()
+
+            return Response(status=status.HTTP_204_NO_CONTENT)
+
+        return Response(status=status.HTTP_400_BAD_REQUEST)

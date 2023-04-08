@@ -27,8 +27,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = env('SECRET_KEY')
-
+SECRET_KEY = 'django-insecure-+m#2o!4q9ml%57x0n)50kndujf!ktgec=xdemz5%+u9!ypojiu'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -50,6 +49,7 @@ INSTALLED_APPS = [
     'users',
     'rest_framework',
     'rest_framework_simplejwt',
+    'search',
     'follow'
 ]
 
@@ -81,7 +81,7 @@ TEMPLATES = [
     },
 ]
 
-AUTHENTICATION_BACKENDS = ['django.contrib.auth.backends.ModelBackend',]
+# LOGIN_REDIRECT_URL = '/admin/'
 
 WSGI_APPLICATION = 'sonic.wsgi.application'
 
@@ -90,6 +90,11 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
 }
+
+AUTHENTICATION_BACKENDS = [
+    'sonic.backends.EmailBackend',
+    'django.contrib.auth.backends.ModelBackend',
+]
 
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
