@@ -81,6 +81,8 @@ TEMPLATES = [
     },
 ]
 
+# LOGIN_REDIRECT_URL = '/admin/'
+
 WSGI_APPLICATION = 'sonic.wsgi.application'
 
 REST_FRAMEWORK = {
@@ -88,6 +90,11 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
 }
+
+AUTHENTICATION_BACKENDS = [
+    'sonic.backends.EmailBackend',
+    'django.contrib.auth.backends.ModelBackend',
+]
 
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
