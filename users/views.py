@@ -1,3 +1,4 @@
+from django.shortcuts import render
 from django.contrib.auth.forms import AuthenticationForm
 from threading import Thread
 from base64 import urlsafe_b64decode, urlsafe_b64encode
@@ -33,7 +34,7 @@ class SignupView(APIView):
 
         serializer = UserSerializer(data=data)
         if serializer.is_valid():
-            
+
             serializer.save()
             user = User.objects.get(email=email)
             token = Utils.encode_token(user)
@@ -109,7 +110,7 @@ class LoginView(APIView):
         try:
             user = Utils.authenticate_user(serializer.validated_data)
             serialized_user = UserSerializer(user)
-            token = Utils.enconde_token(user)
+            token = Utils.encode_token(user)
 
             return Response(
                 {
@@ -143,7 +144,6 @@ class UpdateProfileView(APIView):
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-from django.shortcuts import render
 
 def my_template_view(request):
     context = {
@@ -152,8 +152,9 @@ def my_template_view(request):
     }
     return render(request, 'activation_template.html', context)
 
+
 def forgot_password_view(request):
-    
+
     return render(request, 'password_template.html')
 
 # class ResetPasswordView(APIView)
