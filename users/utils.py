@@ -9,7 +9,7 @@ import os
 class Utils:
 
     @staticmethod
-    def enconde_token(user):
+    def encode_token(user):
         payload = {
             'id': user.id,
             'is_staff': user.is_staff
@@ -27,7 +27,6 @@ class Utils:
         password = validated_data['password']
 
         user = User.objects.filter(email=email).first()
-        print("faiweufhiwef", user.is_active)
         if user and user.check_password(password):
             return user
 

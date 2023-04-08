@@ -31,6 +31,7 @@ admin.site.login_template = 'login.html'
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/v1/accounts/', include('users.urls')),
+    path('api/v1/follow/', include('follow.urls')),
     path('api/v1/music/', include('music.urls')),
     path('api/v1/search/', include('search.urls')),
     path('api/v1/playlist/', include('playlists.urls'))
