@@ -50,7 +50,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'search',
-    'follow'
+    'follow',
+    'podcast'
 ]
 
 MIDDLEWARE = [

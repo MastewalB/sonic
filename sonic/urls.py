@@ -34,5 +34,6 @@ urlpatterns = [
     path('api/v1/follow/', include('follow.urls')),
     path('api/v1/music/', include('music.urls')),
     path('api/v1/search/', include('search.urls')),
-    path('api/v1/playlist/', include('playlists.urls'))
+    path('api/v1/playlist/', include('playlists.urls')),
+    path('api/v1/podcasts/', include('podcast.urls'))
 ]
