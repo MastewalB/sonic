@@ -28,19 +28,16 @@ class SubscriptionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = PodcastSubscription
-        fields = ['id', 'user', 'episodes_listened']
+        fields = ['id', 'podcast', 'episodes_listened']
         read_only_fields = ['id', 'user']
         depth = 1
 
 
 class UpdateSubscriptionSerializer(serializers.ModelSerializer):
-    podcast = PodcastSerializer(
-        read_only=True
-    )
 
     class Meta:
         model = PodcastSubscription
-        fields = ['id', 'user', 'episodes_listened']
+        fields = ['id', 'episodes_listened']
         read_only_fields = ['user']
 
 

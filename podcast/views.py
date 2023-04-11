@@ -1,3 +1,4 @@
+from django.core import serializers as d_serializers
 from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -26,30 +27,32 @@ class CreateSubscriptionView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
-
         serializer = CreateSubscriptionSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
+        if serializer.is_valid():
 
-        podcast_url = serializer.validated_data['podcast_url']
+            podcast_url = serializer.validated_data['podcast_url']
 
-        podcast_provider = PodcastProvider.objects.get_or_create(
-            name=serializer.validated_data['podcast_provider'])[0]
+            podcast_provider = PodcastProvider.objects.get_or_create(
+                name=serializer.validated_data['podcast_provider'])[0]
 
-        podcast = Podcast.objects.get_or_create(
-            provider=podcast_provider, podcast_id=serializer.validated_data['podcast_id'], podcastUrl=podcast_url)[0]
+            podcast = Podcast.objects.get_or_create(
+                provider=podcast_provider, podcast_id=serializer.validated_data['podcast_id'], podcastUrl=podcast_url)[0]
+            episodes_listened = serializer.validated_data['episodes_listened']
 
-        subscription = PodcastSubscription(
-            podcast=podcast,
-            user=request.user,
-            episodes_listened=serializer.validated_data['episodes_listened']
-        )
-        subscription = subscription.save()
-        subscription = SubscriptionSerializer(data=subscription)
-        subscription.is_valid(raise_exception=True)
+            subscription = PodcastSubscription.objects.get_or_create(
+                podcast=podcast, user=request.user)[0]
+            # subscription = subscription.
+            subscription = d_serializers.serialize('python', [subscription])[0]
 
+            return Response(
+                subscription['fields'],
+                status=status.HTTP_201_CREATED
+            )
         return Response(
-            subscription.data,
-            status=status.HTTP_201_CREATED
+            {
+                'message': 'Please provide all fields.'
+            },
+            status=status.HTTP_400_BAD_REQUEST
         )
 
 
@@ -60,17 +63,17 @@ class SubscriptionView(APIView):
 
         serializer = UpdateSubscriptionSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-
         try:
             subscription = PodcastSubscription.objects.get(
-                id=serializer.validated_data['id'])
+                id=request.data['id'])
             if subscription.user != request.user:
                 return Response(
                     {
-                        "message": "Unauthorized Acess"
+                        "message": "Unauthorized Access"
                     },
                     status=status.HTTP_403_FORBIDDEN
                 )
+
         except PodcastSubscription.DoesNotExist:
             return Response(
                 {
@@ -78,19 +81,35 @@ class SubscriptionView(APIView):
                 },
                 status=status.HTTP_404_NOT_FOUND
             )
-        serializer.save()
 
-        return Response(serializer.data)
+        serializer.update(subscription, serializer.validated_data)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     def delete(self, request):
         serializer = UpdateSubscriptionSerializer(data=request.data)
-        if serializer.is_valid():
+        serializer.is_valid(raise_exception=True)
+        try:
             subscription = PodcastSubscription.objects.get(
-                id=serializer.validated_data['id'])
-            subscription.delete()
-            return Response(status=status.HTTP_204_NO_CONTENT)
+                id=request.data['id'])
+            if subscription.user != request.user:
+                return Response(
+                    {
+                        "message": "Unauthorized Access"
+                    },
+                    status=status.HTTP_403_FORBIDDEN
+                )
 
-        return Response(status=status.HTTP_404_NOT_FOUND)
+        except PodcastSubscription.DoesNotExist:
+            return Response(
+                {
+                    "message": "No Such Subscription"
+                },
+                status=status.HTTP_404_NOT_FOUND
+            )
+        subscription.delete()
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class SubscriptionListView(ListAPIView):

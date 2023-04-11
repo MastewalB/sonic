@@ -16,7 +16,7 @@ class Podcast(models.Model):
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                fields=['id', 'provider'], name='unique_podcast')
+                fields=['podcast_id', 'provider'], name='unique_podcast')
         ]
 
 
@@ -28,7 +28,7 @@ class Episode(models.Model):
 class PodcastSubscription(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    podcast = models.ForeignKey(Podcast, on_delete=models.CASCADE)
+    podcast = models.ForeignKey(Podcast, on_delete=models.CASCADE, unique=True)
     episodes_listened = models.IntegerField()
 
     # class Meta:
