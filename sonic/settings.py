@@ -53,7 +53,8 @@ INSTALLED_APPS = [
     'search',
     'follow',
     'studio',
-    'media'
+    'media',
+    'podcast'
 ]
 
 MIDDLEWARE = [
