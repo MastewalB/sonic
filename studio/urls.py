@@ -7,7 +7,7 @@ urlpatterns = [
     path("podcasts/list/<str:user_id>", StudioPodcastListView.as_view()),
     path("episodes/", StudioEpisodeView.as_view()),
     path("episodes/view/<str:episode_id>", GetStudioEpisodeView.as_view()),
-    path("episdodes/list/<str:user_id>", StudioEpisodeListView.as_view()),
+    path("episodes/list/<str:podcast_id>", StudioEpisodeListView.as_view()),
 
     path("genres/all", GenreView.as_view())
 ]

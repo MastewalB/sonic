@@ -38,9 +38,22 @@ class StudioEpisode(models.Model):
                             validators=[FileMimeValidator("AUDIO")])
 
     def __str__(self):
-        return '{0} Episode - {1}'.format(self.podcast.title, self.title)
+        return 'Episode {0} of {1} - {2}'.format(self.index, self.podcast.title, self.title)
+
+    def save(self, *args, **kwargs):
+        if self._state.adding:
+            podcast = self.podcast
+            podcast.number_of_episodes += 1
+            podcast.save()
+            self.index = self.podcast.number_of_episodes
+
+        super(StudioEpisode, self).save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
+        podcast = self.podcast
+        podcast.number_of_episodes -= 1
+        podcast.save()
+
         storage, path = self.file.storage, self.file.path
         super(StudioEpisode, self).delete(*args, **kwargs)
         storage.delete(path)
