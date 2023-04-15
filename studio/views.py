@@ -9,7 +9,7 @@ from rest_framework.generics import ListAPIView
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser, IsAuthenticatedOrReadOnly
 
 from studio.models import StudioEpisode, StudioPodcast, Genre
-from studio.serializers import StudioPodcastSerializer, StudioEpisodeSerializer, GenreSerializer, UpdateStudioPodastSerializer, DeleteStudioPodcastSerializer
+from studio.serializers import StudioPodcastSerializer, StudioEpisodeSerializer, GenreSerializer, DeleteStudioItemSerializer
 
 # Create your views here.
 
@@ -71,7 +71,7 @@ class StudioPodcastView(APIView):
                 status=status.HTTP_403_FORBIDDEN
             )
 
-        serializer = UpdateStudioPodastSerializer(podcast, data=request.data)
+        serializer = StudioPodcastSerializer(podcast, data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.context['author'] = request.user
         serializer.save()
@@ -104,8 +104,14 @@ class GetStudioEpisodeView(APIView):
     """
     permission_classes = [AllowAny]
 
-    def get(self, request):
-        return
+    def get(self, request, episode_id):
+        episode = get_object_or_404(StudioEpisode, id=episode_id)
+        episode_serializer = StudioEpisodeSerializer(episode)
+
+        return Response(
+            episode_serializer.data,
+            status=status.HTTP_200_OK
+        )
 
 
 class StudioEpisodeView(APIView):
@@ -115,13 +121,51 @@ class StudioEpisodeView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
-        return
+        serializer = StudioEpisodeSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        if serializer.validated_data['podcast'].author != request.user:
+            return Response(
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        serializer.save()
+        return Response(
+            serializer.data,
+            status=status.HTTP_201_CREATED
+        )
 
     def put(self, request):
-        return
+        if 'id' not in request.data:
+            return Response(
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        episode = get_object_or_404(StudioEpisode, id=request.data['id'])
+        serializer = StudioEpisodeSerializer(episode, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        return Response(
+            serializer.data,
+            status=status.HTTP_200_OK
+        )
 
     def delete(self, request):
-        return
+        serializer = DeleteStudioItemSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        episode = get_object_or_404(
+            StudioEpisode, id=serializer.validated_data['id'])
+        if episode.podcast.author != request.user:
+            return Response(
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        episode.delete()
+        return Response(
+            status=status.HTTP_204_NO_CONTENT
+        )
 
 
 class StudioPodcastListView(ListAPIView):
@@ -138,4 +182,6 @@ class StudioEpisodeListView(ListAPIView):
     serializer_class = StudioEpisodeSerializer
 
     def get_queryset(self):
-        return
+        podcast_id = self.kwargs['podcast_id']
+        queryset = StudioEpisode.objects.filter(podcast=podcast_id)
+        return queryset
