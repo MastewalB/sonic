@@ -36,10 +36,13 @@ class GetStudioPodcastView(APIView):
 
         podcast_serializer = StudioPodcastSerializer(podcast)
 
+        protocol = "https" if request.is_secure() else "http"
         return Response(
-            {"podcast": podcast_serializer.data,
-             "feed_url": "http://{0}/api/v1/studio/podcasts/feed/{1}".format(get_current_site(request).domain, podcast.slug)
-             },
+            {
+                "podcast": podcast_serializer.data,
+                "rss_feed_url": "{0}://{1}/api/v1/studio/podcasts/feed/rss/{2}".format(protocol, get_current_site(request).domain, podcast.slug),
+                "atom_feed_url": "{0}://{1}/api/v1/studio/podcasts/feed/atom/{2}".format(protocol, get_current_site(request).domain, podcast.slug)
+            },
             status=status.HTTP_200_OK
         )
 
