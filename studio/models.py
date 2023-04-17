@@ -1,5 +1,6 @@
 import uuid
 from django.db import models
+from django.utils.text import slugify
 from users.models import User
 from common.utils.mime_validator import FileMimeValidator
 from common.utils.upload_path import file_upload_path
@@ -21,7 +22,13 @@ class StudioPodcast(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     description = models.TextField()
     genre = models.TextField()
+    slug = models.SlugField(unique=True, blank=True)
     number_of_episodes = models.IntegerField(default=0)
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.title)
+        super(StudioPodcast, self).save(*args, **kwargs)
 
     def __str__(self):
         return '{0}\'s podcast - {1}'.format(self.author, self.title)
@@ -29,11 +36,13 @@ class StudioPodcast(models.Model):
 
 class StudioEpisode(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    index = models.IntegerField()
+    index = models.IntegerField(blank=True)
     title = models.CharField(max_length=100)
     description = models.TextField()
     podcast = models.ForeignKey(StudioPodcast, on_delete=models.CASCADE)
-    upload_date = models.DateField(auto_now_add=True)
+    slug = models.SlugField(unique=True, blank=True)
+    upload_date = models.DateTimeField(auto_now_add=True)
+    last_modified = models.DateTimeField(auto_now=True)
     file = models.FileField(upload_to=file_upload_path,
                             validators=[FileMimeValidator("AUDIO")])
 
@@ -47,6 +56,8 @@ class StudioEpisode(models.Model):
             podcast.save()
             self.index = self.podcast.number_of_episodes
 
+        if not self.slug:
+            self.slug = slugify(self.title)
         super(StudioEpisode, self).save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
