@@ -36,12 +36,13 @@ class StudioPodcast(models.Model):
 
 class StudioEpisode(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    index = models.IntegerField()
+    index = models.IntegerField(blank=True)
     title = models.CharField(max_length=100)
     description = models.TextField()
     podcast = models.ForeignKey(StudioPodcast, on_delete=models.CASCADE)
     slug = models.SlugField(unique=True, blank=True)
-    upload_date = models.DateField(auto_now_add=True)
+    upload_date = models.DateTimeField(auto_now_add=True)
+    last_modified = models.DateTimeField(auto_now=True)
     file = models.FileField(upload_to=file_upload_path,
                             validators=[FileMimeValidator("AUDIO")])
 
