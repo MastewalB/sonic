@@ -4,6 +4,7 @@ from django.utils.text import slugify
 from users.models import User
 from common.utils.mime_validator import FileMimeValidator
 from common.utils.upload_path import file_upload_path
+from common.utils.unique_slugify import unique_slugify
 
 # Create your models here.
 
@@ -27,7 +28,7 @@ class StudioPodcast(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.slug:
-            self.slug = slugify(self.title)
+            unique_slugify(self, self.title)
         super(StudioPodcast, self).save(*args, **kwargs)
 
     def __str__(self):
@@ -57,7 +58,7 @@ class StudioEpisode(models.Model):
             self.index = self.podcast.number_of_episodes
 
         if not self.slug:
-            self.slug = slugify(self.title)
+            self.slug = (self.title)
         super(StudioEpisode, self).save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
