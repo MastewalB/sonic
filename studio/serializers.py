@@ -1,5 +1,6 @@
 from rest_framework import fields, serializers
 from studio.models import *
+from users.serializers import UserPublicSerializer
 
 
 class GenreSerializer(serializers.ModelSerializer):
@@ -32,6 +33,7 @@ class StudioEpisodeSerializer(serializers.ModelSerializer):
 
 class StudioPodcastSerializer(serializers.ModelSerializer):
     episodes = serializers.SerializerMethodField()
+    author = serializers.SerializerMethodField()
 
     class Meta:
         model = StudioPodcast
@@ -39,11 +41,15 @@ class StudioPodcastSerializer(serializers.ModelSerializer):
         read_only_fields = [
             'id', 'author', 'episodes', 'number_of_episodes'
         ]
+        depth = 1
 
     def get_episodes(self, obj):
         episodes = StudioEpisode.objects.filter(
             podcast=obj.id)
         return StudioEpisodeSerializer(episodes, many=True).data
+
+    def get_author(self, obj):
+        return UserPublicSerializer(obj.author).data
 
     def create(self, validated_data):
         podcast = StudioPodcast(
