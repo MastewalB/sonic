@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import FileResponse
 from django.conf import settings
+from django.contrib.sites.shortcuts import get_current_site
 from rest_framework import serializers, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -35,8 +36,13 @@ class GetStudioPodcastView(APIView):
 
         podcast_serializer = StudioPodcastSerializer(podcast)
 
+        protocol = "https" if request.is_secure() else "http"
         return Response(
-            podcast_serializer.data,
+            {
+                "podcast": podcast_serializer.data,
+                "rss_feed_url": "{0}://{1}/api/v1/studio/podcasts/feed/rss/{2}".format(protocol, get_current_site(request).domain, podcast.slug),
+                "atom_feed_url": "{0}://{1}/api/v1/studio/podcasts/feed/atom/{2}".format(protocol, get_current_site(request).domain, podcast.slug)
+            },
             status=status.HTTP_200_OK
         )
 
