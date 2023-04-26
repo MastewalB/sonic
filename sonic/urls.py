@@ -32,6 +32,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('storage/', include('media.urls')),
     path('api/v1/accounts/', include('users.urls')),
+
+    path('api/v1/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('api/v1/follow/', include('follow.urls')),
     path('api/v1/music/', include('music.urls')),
     path('api/v1/search/', include('search.urls')),
