@@ -23,7 +23,7 @@ class StudioPodcast(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     description = models.TextField()
     genre = models.TextField()
-    slug = models.SlugField(unique=True, blank=True)
+    slug = models.SlugField(unique=True, blank=True, default=uuid.uuid1)
     number_of_episodes = models.IntegerField(default=0)
 
     def save(self, *args, **kwargs):
@@ -41,11 +41,11 @@ class StudioEpisode(models.Model):
     title = models.CharField(max_length=100)
     description = models.TextField()
     podcast = models.ForeignKey(StudioPodcast, on_delete=models.CASCADE)
-    slug = models.SlugField(unique=True, blank=True)
+    slug = models.SlugField(unique=True, blank=True, default=uuid.uuid1)
     upload_date = models.DateTimeField(auto_now_add=True)
     last_modified = models.DateTimeField(auto_now=True)
     file = models.FileField(upload_to=file_upload_path,
-                            validators=[FileMimeValidator("AUDIO")])
+                            )
 
     def __str__(self):
         return 'Episode {0} of {1} - {2}'.format(self.index, self.podcast.title, self.title)
@@ -58,7 +58,7 @@ class StudioEpisode(models.Model):
             self.index = self.podcast.number_of_episodes
 
         if not self.slug:
-            self.slug = (self.title)
+            self.slug = unique_slugify(self, self.title)
         super(StudioEpisode, self).save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
