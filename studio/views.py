@@ -88,7 +88,7 @@ class StudioPodcastView(APIView):
         )
 
     def delete(self, request):
-        serializer = DeleteStudioPodcastSerializer(data=request.data)
+        serializer = DeleteStudioItemSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
         podcast = get_object_or_404(

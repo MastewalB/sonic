@@ -2,7 +2,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.response import Response
-from playlists.serializers import PlaylistSerializer, PlaylistItemsSerializer, CreatePlaylistSerializer
+from playlists.serializers import PlaylistSerializer, PlaylistItemsSerializer, CreatePlaylistSerializer, PlaylistDetailSerializer
 from playlists.models import Playlist, PlaylistItems
 from music.models import Song
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser, IsAuthenticatedOrReadOnly
@@ -36,8 +36,9 @@ class PlaylistView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, playlist_id):
-        items = PlaylistItems.objects.filter(playlist_id=playlist_id)
-        serializer = PlaylistItemsSerializer(items, many=True)
+        item = get_object_or_404(Playlist, id=playlist_id)
+        serializer = PlaylistDetailSerializer(item)
+        serializer.context['request'] = request
 
         return Response(data=serializer.data)
 
