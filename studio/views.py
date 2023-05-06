@@ -128,9 +128,12 @@ class StudioEpisodeView(APIView):
 
     def post(self, request):
         serializer = StudioEpisodeSerializer(data=request.data)
+        podcast = get_object_or_404(
+            StudioPodcast, id=request.data['podcast_id'])
+        serializer.context['podcast'] = podcast
         serializer.is_valid(raise_exception=True)
 
-        if serializer.validated_data['podcast'].author != request.user:
+        if podcast.author != request.user:
             return Response(
                 status=status.HTTP_403_FORBIDDEN
             )
@@ -179,6 +182,8 @@ class StudioPodcastListView(ListAPIView):
     queryset = StudioPodcast.objects.all()
 
     def get_queryset(self):
+        self.get_serializer_context()
+        # serializer.context["request"] = self.request
         user_id = self.kwargs['user_id']
         queryset = self.queryset.filter(author=user_id)
         return queryset

@@ -57,7 +57,8 @@ INSTALLED_APPS = [
     'gstream',
     'studio',
     'media',
-    'podcast'
+    'podcast',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
@@ -68,6 +69,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'users.middlewares.ActiveUserMiddleware'
 ]
 
@@ -99,6 +101,8 @@ REST_FRAMEWORK = {
     ),
 }
 
+
+CORS_ORIGIN_ALLOW_ALL = True
 AUTHENTICATION_BACKENDS = [
     'sonic.backends.EmailBackend',
     'django.contrib.auth.backends.ModelBackend',
@@ -170,6 +174,9 @@ STATIC_URL = 'static/'
 
 MEDIA_URL = '/storage/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'storage')
+
+
+DATA_UPLOAD_MAX_NUMBER_FIELDS = 200000
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
