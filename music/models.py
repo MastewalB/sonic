@@ -26,7 +26,8 @@ class Song(models.Model):
     title = models.CharField(max_length=35)
     s_artist = models.ForeignKey(Artist, on_delete=models.CASCADE)
     s_album = models.ForeignKey(Album, on_delete=models.CASCADE)
-    song_file = models.FileField(upload_to=file_upload_path)
+    song_file = models.FileField(upload_to=file_upload_path, validators=[
+                                 FileMimeValidator("AUDIO")])
     content_type = models.CharField(max_length=50)
 
     def delete(self, *args, **kwargs):
