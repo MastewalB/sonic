@@ -44,8 +44,8 @@ class StudioEpisode(models.Model):
     slug = models.SlugField(unique=True, blank=True, default=uuid.uuid1)
     upload_date = models.DateTimeField(auto_now_add=True)
     last_modified = models.DateTimeField(auto_now=True)
-    file = models.FileField(upload_to=file_upload_path,
-                            )
+    file = models.FileField(upload_to=file_upload_path, validators=[
+        FileMimeValidator("AUDIO")])
 
     def __str__(self):
         return 'Episode {0} of {1} - {2}'.format(self.index, self.podcast.title, self.title)
