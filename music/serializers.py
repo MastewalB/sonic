@@ -18,16 +18,18 @@ class AlbumSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Album
-        fields = ['id', 'artist', 'name', 'cover']
+        fields = ['id', 'artist', 'name', 'cover', 'songs']
 
     def get_songs(self, obj):
-        songs = Song.objects.filter(album=obj.id)
+        songs = Song.objects.filter(s_album=obj.id)
         return SongSerializer(songs, many=True).data
 
 
 class SongSerializer(serializers.ModelSerializer):
-    song_file = serializers.SerializerMethodField()
+    # song_file = serializers.SerializerMethodField()
 
     class Meta:
         model = Song
         fields = ['id', 'title', 's_artist', 's_album', 'song_file', 'content_type']
+
+    # def get_song_file(self, obj):

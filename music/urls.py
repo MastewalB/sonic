@@ -10,9 +10,9 @@ from .views import (
 )
 
 router = routers.DefaultRouter()
-router.register(r'albums', AlbumViewSet, basename='albums')
-router.register(r'artists', ArtistViewSet, basename='artists')
-router.register(r'songs', SongViewSet, basename='songs')
+# router.register(r'albums', AlbumViewSet, basename='albums')
+# router.register(r'artists', ArtistViewSet, basename='artists')
+# router.register(r'songs', SongViewSet, basename='songs')
 router.register(r'albums', AlbumGetViewSet, basename='albums')
 router.register(r'artists', ArtistGetViewSet, basename='artists')
 router.register(r'songs', SongGetViewSet, basename='songs')
