@@ -36,7 +36,9 @@ class FileMimeValidator:
 
     def __call__(self, data):
         extension = Path(data.name).suffix[1:].lower()
-        content_type = magic.from_buffer(data.read(2048), mime=True)
+        magic_validator = magic.Magic(uncompress=True, mime=True)
+        data.seek(0)
+        content_type = magic_validator.from_buffer(data.read())
         if extension not in self.allowed_extensions:
             raise ValidationError(
                 self.messages['not_supported'],
