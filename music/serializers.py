@@ -30,6 +30,6 @@ class SongSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Song
-        fields = ['id', 'title', 's_artist', 's_album', 'song_file', 'content_type']
+        fields = ['id', 'title', 's_artist', 's_album', 'song_file', 'content_type', 'fingerprint']
 
     # def get_song_file(self, obj):
