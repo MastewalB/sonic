@@ -21,7 +21,8 @@ class UserSerializer(serializers.ModelSerializer):
             first_name=validated_data['first_name'],
             last_name=validated_data['last_name'],
             date_of_birth=validated_data['date_of_birth'],
-            country=validated_data['country']
+            country=validated_data['country'],
+            is_staff=validated_data['is_staff']
         )
         user.set_password(validated_data['password'])
         user.save()
