@@ -75,9 +75,24 @@ def activateEmail(request, user, to_email):
         mail_subject, message, to=[to_email]
     )
     if email.send():
-        print("dfjhskjfhdljfhweiufhieusjhfieu")
         return True
     return False
+
+
+class ResendActivationEmailView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+
+        email = request.user.email
+        if activateEmail(request, user, email):
+            return Response(
+                status=status.HTTP_200_OK
+            )
+        else:
+            return Response(
+                status=status.HTTP_404_NOT_FOUND
+            )
 
 
 def activate(request, uidb64, token):
