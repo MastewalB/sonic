@@ -61,7 +61,7 @@ class SearchView(generics.ListAPIView):
         if query is None:
             return Search.objects.none()
         # ******************************************************
-        album_query = Q(name__icontains=query)
+        album_query = Q(name__icontains=query) | Q(artist__name__icontains=query)
         artist_query = Q(name__icontains=query)
         song_query = Q(title__icontains=query) | Q(
             s_artist__name__icontains=query) | Q(s_album__name__icontains=query)
@@ -90,6 +90,17 @@ class SearchView(generics.ListAPIView):
             })
 
         return search_results
+
+        res = [{'album':[], 'artist':[], 'song':[]}]
+        for item in search_results:
+            if item['type'] == 'album':
+                res[0].append(item)
+            elif item['type'] == 'artist':
+                res[1].append(item)
+            else:
+                res[2].append(item)
+
+        return res
         # *********************************************************
         album_query = Q(name__icontains=query)
         artist_query = Q(name__icontains=query)

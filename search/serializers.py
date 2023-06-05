@@ -9,11 +9,11 @@ class SearchSerializer(serializers.Serializer):
 
     def get_data(self, obj):
         if obj['type'] == 'album':
-            serializer = AlbumSerializer(obj['data'])
+            serializer = AlbumSerializer(obj['data'], context = self.context)
         elif obj['type'] == 'artist':
-            serializer = ArtistSerializer(obj['data'])
+            serializer = ArtistSerializer(obj['data'], context = self.context)
         elif obj['type'] == 'song':
-            serializer = SongSerializer(obj['data'])
+            serializer = SongSerializer(obj['data'], context = self.context)
         else:
             raise ValueError(f"Invalid type: {obj['type']}")
 

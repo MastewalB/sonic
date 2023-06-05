@@ -68,7 +68,7 @@ class User(AbstractBaseUser):
         return y
 
     def __str__(self):
-        if first_name == '':
+        if self.first_name == '':
             return self.username
         return self.get_full_name()
 
