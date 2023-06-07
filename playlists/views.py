@@ -27,9 +27,9 @@ class CreatePlaylistView(APIView):
 class UserPlaylistView(APIView):
     def get(self, request, user_id):
         items = Playlist.objects.filter(created_by=user_id)
-        serializer = PlaylistSerializer(items, many=True)
+        serializer = PlaylistDetailSerializer(items, many=True)
 
-        return Response(data=serializer.data)
+        return Response(data=serializer.data, status=status.HTTP_200_OK)
 
 
 class PlaylistView(APIView):

@@ -1,8 +1,18 @@
 from rest_framework import fields, serializers
 from users.models import User
+from favorites.models import LikedSongsPlaylist
+from favorites.serializers import LikedSongsPlaylistSerializer
+
+
+class UserPublicSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'first_name', 'last_name']
 
 
 class UserSerializer(serializers.ModelSerializer):
+    # favorites_playlist = serializers.SerializerMethodField()
+
     class Meta:
         model = User
         fields = ['id', 'password', 'email', 'username', 'first_name',
@@ -13,6 +23,10 @@ class UserSerializer(serializers.ModelSerializer):
             }
         }
         read_only_fields = ['id']
+
+    # def get_favorites_playlist(self, obj):
+    #     favorites_playlist = LikedSongsPlaylist.objects.get(user_id=obj.id)
+    #     return LikedSongsPlaylistSerializer(favorites_playlist, context=self.context).data
 
     def create(self, validated_data):
         user = User(
@@ -34,12 +48,6 @@ class UserSerializer(serializers.ModelSerializer):
             instance.set_password(password)
 
         return super().update(instance, validated_data)
-
-
-class UserPublicSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ['id', 'username', 'first_name', 'last_name']
 
 
 class LoginSerializer(serializers.Serializer):
