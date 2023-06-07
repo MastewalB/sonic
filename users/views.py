@@ -144,7 +144,7 @@ class LoginView(APIView):
 class UpdateProfileView(APIView):
     permission_classes = [IsAuthenticated]
 
-    def put(self, request):
+    def patch(self, request):
         user = None
         try:
             user = User.objects.get(id=request.user.id)
@@ -153,7 +153,7 @@ class UpdateProfileView(APIView):
                 status=status.HTTP_404_NOT_FOUND,
             )
         data = request.data
-        serializer = UserSerializer(user, data=data)
+        serializer = UserSerializer(user, data=data, partial = True)
         serializer.is_valid(raise_exception=True)
         serializer.save()
 
