@@ -2,15 +2,15 @@ from rest_framework import serializers
 from music.models import Artist, Album, Song
 
 class ArtistSerializer(serializers.ModelSerializer):
-    # albums = serializers.SerializerMethodField()
+    albums = serializers.SerializerMethodField()
 
     class Meta:
         model = Artist
-        fields = ['id', 'name', 'picture']
+        fields = ['id', 'name', 'picture', 'albums']
 
-    # def get_albums(self, obj):
-    #     albums = Album.objects.filter(artist=obj.id)
-    #     return AlbumSerializer(albums, many=True).data
+    def get_albums(self, obj):
+        albums = Album.objects.filter(artist=obj.id)
+        return AlbumInfoSerializer(albums, many=True).data
 
 
 class AlbumInfoSerializer(serializers.ModelSerializer):
