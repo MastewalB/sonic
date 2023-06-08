@@ -28,6 +28,7 @@ class UserPlaylistView(APIView):
     def get(self, request, user_id):
         items = Playlist.objects.filter(created_by=user_id)
         serializer = PlaylistDetailSerializer(items, many=True)
+        serializer.context['request'] = request
 
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 
@@ -61,6 +62,7 @@ class PlaylistItemsView(APIView):
 
     def post(self, request):
         serializer = PlaylistItemsSerializer(data=request.data)
+        serializer.context['request'] = request
 
         if serializer.is_valid():
             playlist = None
@@ -79,6 +81,7 @@ class PlaylistItemsView(APIView):
 
     def delete(self, request):
         serializer = PlaylistItemsSerializer(data=request.data)
+        serializer.context['request'] = request
         playlist_item = None
         if serializer.is_valid():
             playlist_item = PlaylistItems.objects.get(
