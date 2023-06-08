@@ -52,7 +52,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'playlists',
     'music',
-    'users',
+    'users.apps.UsersConfig',
     'rest_framework',
     'rest_framework_simplejwt',
     'search',
@@ -62,6 +62,7 @@ INSTALLED_APPS = [
     'media',
     'podcast',
     'corsheaders',
+    'favorites',
 ]
 
 MIDDLEWARE = [

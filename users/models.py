@@ -68,9 +68,7 @@ class User(AbstractBaseUser):
         return y
 
     def __str__(self):
-        if self.first_name == '':
-            return self.username
-        return self.get_full_name()
+        return self.username
 
     def has_perm(self, perm, obj=None):
         return self.is_staff
