@@ -13,7 +13,7 @@ from django.views.generic import View
 from rest_framework import serializers, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from users.serializers import UserSerializer, LoginSerializer
+from users.serializers import UserPublicSerializer, UserSerializer, LoginSerializer
 from users.utils import Utils
 from users.models import User
 from django.http import HttpResponse
@@ -24,7 +24,12 @@ from users.forms import AdminLoginForm
 
 # Create your views here.
 
-
+class UserPublicAPIView(APIView):
+    def get(self, request, pk):
+        user = User.objects.get(pk=pk)
+        serializer = UserPublicSerializer(user)
+        return Response(serializer.data)
+    
 class SignupView(APIView):
     permission_classes = [AllowAny,]
 

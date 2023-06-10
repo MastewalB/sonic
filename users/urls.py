@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.urls import path
-from users.views import SignupView, LoginView, UpdateProfileView, activate, my_template_view, forgot_password_view, ResendActivationEmailView
+from users.views import SignupView, LoginView, UpdateProfileView, UserPublicAPIView, activate, my_template_view, forgot_password_view, ResendActivationEmailView
 
 
 urlpatterns = [
@@ -11,4 +11,5 @@ urlpatterns = [
     path('resend/', ResendActivationEmailView.as_view()),
     path('activate/<uidb64>/<token>', activate, name='activate'),
     path('update/', UpdateProfileView.as_view(), name='update'),
+    path('users/<str:pk>/', UserPublicAPIView.as_view(), name='user-public')
 ]

@@ -2,6 +2,8 @@ from django.shortcuts import render
 from rest_framework import generics
 from rest_framework.response import Response
 from django.db.models import Q
+
+from users.models import User
 from .models import Search
 from .serializers import SearchSerializer
 from music.models import Album, Artist, Song
@@ -65,10 +67,12 @@ class SearchView(generics.ListAPIView):
         artist_query = Q(name__icontains=query)
         song_query = Q(title__icontains=query) | Q(
             s_artist__name__icontains=query) | Q(s_album__name__icontains=query)
+        user_query = Q(username__icontains = query) | Q(first_name__icontains = query) | Q(last_name__icontains = query)
 
         album_results = Album.objects.filter(album_query)
         artist_results = Artist.objects.filter(artist_query)
         song_results = Song.objects.filter(song_query)
+        user_results = User.objects.filter(user_query)
 
         search_results = []
         for album in album_results:
@@ -87,6 +91,12 @@ class SearchView(generics.ListAPIView):
             search_results.append({
                 'type': 'song',
                 'data': song
+            })
+
+        for user in user_results:
+            search_results.append({
+                'type': 'user',
+                'data': user
             })
 
         return search_results
