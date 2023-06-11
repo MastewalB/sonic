@@ -39,3 +39,5 @@ Twisted==22.10.0
 txaio==23.1.1
 typing_extensions==4.5.0
 zope.interface==6.0
+numpy==1.22.2
+pandas==1.4.1
