@@ -42,7 +42,6 @@ class AlbumSerializer(serializers.ModelSerializer):
 
 
 class SongSerializer(serializers.ModelSerializer):
-    # song_file = serializers.SerializerMethodField()
     s_album = serializers.SerializerMethodField()
     s_artist = serializers.SerializerMethodField()
 
