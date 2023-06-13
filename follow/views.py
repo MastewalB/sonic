@@ -26,7 +26,6 @@ class FollowView(APIView):
             status=status.HTTP_201_CREATED
         )
 
-
     def delete(self, request):
         try:
             follower = request.user
@@ -63,6 +62,6 @@ class FollowDetailListView(ListAPIView):
     pagination_class = PageNumberPagination
 
     def get_queryset(self):
-        followee_id = self.request.data['followee_id']
-        queryset = Follow.objects.filter(followee=followee_id)
+        follower_id = self.request.user.id
+        queryset = Follow.objects.filter(follower=follower_id)
         return queryset

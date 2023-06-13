@@ -3,6 +3,7 @@ from django.db.models.signals import post_save
 from users.models import User
 from playlists.models import Playlist
 from favorites.models import LikedSongsPlaylist
+from gstream.models import Stream
 
 
 @receiver(post_save, sender=User)
@@ -34,3 +35,24 @@ def create_playlist(sender, instance, created, **kwargs):
                 created_by=instance.id, playlist_title="Liked Songs")
             liked_songs_store = LikedSongsPlaylist(
                 user_id=instance.id, playlist_id=playlist.id)
+
+
+@receiver(post_save, sender=User)
+def create_stream_table(sender, instance, created, **kwargs):
+    if created:
+        stream_table = None
+        try:
+            stream_table = Stream(user_id=instance.id)
+            stream_table.save()
+        except Exception as e:
+            stream_table = None
+    else:
+        try:
+            stream_table = Stream.objects.get(user_id=instance.id)
+        except (Stream.DoesNotExist, Exception) as e:
+            stream_table, created = Stream.objects.get_or_create(
+                user_id=instance.id)
+
+
+post_save.connect(create_playlist, sender=User)
+post_save.connect(create_stream_table, sender=User)

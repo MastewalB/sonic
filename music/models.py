@@ -29,7 +29,6 @@ class Song(models.Model):
     song_file = models.FileField(upload_to=file_upload_path, validators=[
                                  FileMimeValidator("AUDIO")])
     content_type = models.CharField(max_length=50)
-    fingerprint = models.CharField(max_length=255, blank=True, null=True)
 
     def delete(self, *args, **kwargs):
         storage, path = self.song_file.storage, self.song_file.path
