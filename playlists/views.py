@@ -7,8 +7,6 @@ from playlists.models import Playlist, PlaylistItems
 from music.models import Song
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser, IsAuthenticatedOrReadOnly
 
-# Create your views here.
-
 
 class CreatePlaylistView(APIView):
     permission_classes = [IsAuthenticated]
