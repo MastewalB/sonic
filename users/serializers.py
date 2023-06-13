@@ -22,7 +22,7 @@ class UserSerializer(serializers.ModelSerializer):
                 'write_only': True
             }
         }
-        read_only_fields = ['id']
+        read_only_fields = ['id',"is_active"]
 
     # def get_favorites_playlist(self, obj):
     #     favorites_playlist = LikedSongsPlaylist.objects.get(user_id=obj.id)
