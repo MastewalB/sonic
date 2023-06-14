@@ -29,6 +29,6 @@ def recommend(new_song_lyrics):
     similarities = cosine_similarity(new_lyrics_matrix, lyrics_matrix)
     similar_indices = np.argsort(similarities[0])[::-1]
 
-    similar_songs = songs.iloc[similar_indices[1:]][['song_id']].values.tolist()
+    similar_songs = songs.iloc[similar_indices[1:]][['song_id', 'song', 'artist']].values.tolist()
     
     return similar_songs

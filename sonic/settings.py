@@ -67,6 +67,7 @@ INSTALLED_APPS = [
     'podcast',
     'corsheaders',
     'favorites',
+    'recommender'
 ]
 
 MIDDLEWARE = [
