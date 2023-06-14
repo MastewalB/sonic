@@ -19,8 +19,8 @@ class StreamConsumer(AsyncWebsocketConsumer):
             self.channel_name
         )
 
-    async def receive(self, data):
-        data_json = json.loads(data)
+    async def receive(self, text_data):
+        data_json = json.loads(text_data)
         owner = data_json['OWNER']
         sender = data_json['SENDER']
         msg_type = data_json['MSG_TYPE']
@@ -56,7 +56,7 @@ class StreamConsumer(AsyncWebsocketConsumer):
         seek = event['DATA']['SEEK']
 
         await self.send(
-            data=json.dumps({
+            text_data=json.dumps({
                 'type': 'group_stream',
                 'OWNER': owner,
                 'SENDER': sender,
