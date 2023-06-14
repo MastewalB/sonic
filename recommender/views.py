@@ -4,6 +4,7 @@ from rest_framework.response import Response
 
 from music.models import Song
 from music.serializers import SongSerializer
+from music.serializers import SongSerializer
 from recommender.song_analysis import recommend
 
 class SongRecommender(APIView):
@@ -15,7 +16,7 @@ class SongRecommender(APIView):
         # call the recommend function
         recommended_songs = recommend(lyrics)[:5]
         # serializer needs to be done
-        print(recommended_songs)
+        # print(recommended_songs)
         x = []
         for i in recommended_songs:
             song = Song.objects.get(id=i[0])
