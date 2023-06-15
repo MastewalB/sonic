@@ -19,8 +19,8 @@ class StreamConsumer(AsyncWebsocketConsumer):
             self.channel_name
         )
 
-    async def receive(self, data):
-        data_json = json.loads(data)
+    async def receive(self, text_data):
+        data_json = json.loads(text_data)
         owner = data_json['OWNER']
         sender = data_json['SENDER']
         msg_type = data_json['MSG_TYPE']
@@ -28,6 +28,9 @@ class StreamConsumer(AsyncWebsocketConsumer):
         url = data_json['DATA']['URL']
         play = data_json['DATA']['PLAY']
         seek = data_json['DATA']['SEEK']
+        artist_name = data_json['DATA']['ARTIST_NAME']
+        title = data_json['DATA']['TITLE']
+        image_url = data_json['DATA']['IMAGE_URL']
 
         await self.channel_layer.group_send(
             self.room_name,
@@ -40,7 +43,10 @@ class StreamConsumer(AsyncWebsocketConsumer):
                 'DATA': {
                     'URL': url,
                     'PLAY': play,
-                    'SEEK': seek
+                    'SEEK': seek,
+                    'ARTIST_NAME': artist_name,
+                    'TITLE': title,
+                    'IMAGE_URL': image_url
                 }
             }
         )
@@ -54,9 +60,12 @@ class StreamConsumer(AsyncWebsocketConsumer):
         url = event['DATA']['URL']
         play = event['DATA']['PLAY']
         seek = event['DATA']['SEEK']
+        artist_name = event['DATA']['ARTIST_NAME']
+        title = event['DATA']['TITLE']
+        image_url = event['DATA']['IMAGE_URL']
 
         await self.send(
-            data=json.dumps({
+            text_data=json.dumps({
                 'type': 'group_stream',
                 'OWNER': owner,
                 'SENDER': sender,
@@ -65,7 +74,10 @@ class StreamConsumer(AsyncWebsocketConsumer):
                 'DATA': {
                     'URL': url,
                     'PLAY': play,
-                    'SEEK': seek
+                    'SEEK': seek,
+                    'ARTIST_NAME': artist_name,
+                    'TITLE': title,
+                    'IMAGE_URL': image_url
                 }
             })
         )
