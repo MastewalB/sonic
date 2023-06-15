@@ -1,3 +1,4 @@
+import base64
 from django.shortcuts import render
 from django.contrib.auth.forms import AuthenticationForm
 from threading import Thread
@@ -67,11 +68,19 @@ class SignupView(APIView):
 
 
 def activateEmail(request, user, to_email):
+    user_pk = user.pk
+    encoded_bytes = base64.urlsafe_b64encode(force_bytes(user_pk))
+    print(encoded_bytes)
+    encoded_string = encoded_bytes.decode('utf-8')
+    trimmed_string = encoded_string
+    print(trimmed_string)
+        
+
     mail_subject = "Email Confirmation"
     message = render_to_string('template_account_activate.html', {
         'user': user.username,
         'domain': get_current_site(request).domain,
-        'uid': urlsafe_b64encode(force_bytes(user.pk)),
+        'uid': trimmed_string,
         'token': default_token_generator.make_token(user),
         'protocol': 'https' if request.is_secure() else 'http'
     })
@@ -129,15 +138,26 @@ class LoginView(APIView):
 
         try:
             user = Utils.authenticate_user(serializer.validated_data)
-            serialized_user = UserSerializer(user)
-            token = Utils.encode_token(user)
+            print(user.is_active)
+            if user.is_active:
+                serialized_user = UserSerializer(user)
+                token = Utils.encode_token(user)
 
-            return Response(
-                {
-                    "data": serialized_user.data,
-                    "token": token
-                }
-            )
+                return Response(
+                    {
+                        "data": serialized_user.data,
+                        "token": token
+                    }
+                )
+            else:
+                return Response(
+                    # status=status.HTTP_401_UNAUTHORIZED
+
+                    {
+                        "message": "User is not active. Please activate your account."
+                    }
+                )
+
         except serializers.ValidationError:
             return Response(
                 {
