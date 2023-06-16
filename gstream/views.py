@@ -19,11 +19,12 @@ class StreamView(APIView):
     def get(self, request):
 
         try:
-            stream, created = Stream.objects.get_or_create(
-                user_id=request.user)
+            stream = Stream.objects.filter(
+                user_id=request.user).first()
             return Response({"status": stream.is_active}, status=status.HTTP_200_OK)
-        except Exception as e:
-            print(e)
+        except Stream.DoesNotExist  as e:
+            stream = Stream.objects.create(userId=request.user)
+            stream.save()
             return Response(
                 status=status.HTTP_400_BAD_REQUEST
             )
@@ -31,34 +32,38 @@ class StreamView(APIView):
     def post(self, request):
         try:
 
-            stream, created = Stream.objects.get_or_create(
-                user_id=request.user)
+            stream = Stream.objects.filter(
+                user_id=request.user).first()
             stream.is_active = True
             stream.save()
 
             return Response(
                 status=status.HTTP_200_OK
             )
-        except Exception as e:
+        except Stream.DoesNotExist as e:
             print(e)
+            stream = Stream.objects.create(userId=request.user)
+            stream.save()
             return Response(
-                status=status.HTTP_400_BAD_REQUEST
+                status=status.HTTP_200_OK
             )
 
     def delete(self, request):
         try:
-            stream, created = Stream.objects.get_or_create(
-                user_id=request.user)
+            stream = Stream.objects.filter(
+                user_id=request.user).first()
 
             stream.is_active = False
             stream.save()
             return Response(
                 status=status.HTTP_204_NO_CONTENT
             )
-        except Exception as e:
-
+        except Stream.DoesNotExist as e:
+            print(e)
+            stream = Stream.objects.create(userId=request.user)
+            stream.save()
             return Response(
-                status=status.HTTP_400_BAD_REQUEST
+                status=status.HTTP_204_NO_CONTENT
             )
 
 
