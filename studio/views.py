@@ -8,7 +8,7 @@ from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.generics import ListAPIView
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser, IsAuthenticatedOrReadOnly
-
+from rest_framework.parsers import FormParser, MultiPartParser
 from studio.models import StudioEpisode, StudioPodcast, Genre
 from studio.serializers import StudioPodcastSerializer, StudioEpisodeSerializer, GenreSerializer, DeleteStudioItemSerializer
 
@@ -125,12 +125,14 @@ class StudioEpisodeView(APIView):
     Create, Update, Delete
     """
     permission_classes = [IsAuthenticated]
+    parser_classes =  (FormParser, MultiPartParser)
 
     def post(self, request):
         serializer = StudioEpisodeSerializer(data=request.data)
         podcast = get_object_or_404(
             StudioPodcast, id=request.data['podcast_id'])
         serializer.context['podcast'] = podcast
+        serializer.context["file"] = request.FILES["file"]
         serializer.is_valid(raise_exception=True)
 
         if podcast.author != request.user:

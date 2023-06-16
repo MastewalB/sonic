@@ -70,10 +70,10 @@ class SignupView(APIView):
 def activateEmail(request, user, to_email):
     user_pk = user.pk
     encoded_bytes = base64.urlsafe_b64encode(force_bytes(user_pk))
-    print(encoded_bytes)
+    # print(encoded_bytes)
     encoded_string = encoded_bytes.decode('utf-8')
     trimmed_string = encoded_string
-    print(trimmed_string)
+    # print(trimmed_string)
         
 
     mail_subject = "Email Confirmation"
@@ -96,17 +96,24 @@ def activateEmail(request, user, to_email):
 class ResendActivationEmailView(APIView):
     permission_classes = [AllowAny]
 
-    def get(self, request):
-
-        email = request.user.email
-        if activateEmail(request, user, email):
-            return Response(
-                status=status.HTTP_200_OK
-            )
-        else:
-            return Response(
-                status=status.HTTP_404_NOT_FOUND
-            )
+    def post(self, request):
+        email = request.data.get('email', '')  # Retrieve the email from the request data
+        
+        try:
+            user = User.objects.get(email=email)  # Retrieve the user from the database using the email
+            
+            if not user.is_active:  # Check if the user is not active
+                if activateEmail(request, user, email):  # Resend the activation email
+                    return Response(
+                        status=status.HTTP_200_OK
+                    )
+        
+        except ObjectDoesNotExist:
+            pass
+        
+        return Response(
+            status=status.HTTP_404_NOT_FOUND
+        )
 
 
 def activate(request, uidb64, token):
