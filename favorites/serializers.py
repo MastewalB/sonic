@@ -6,4 +6,4 @@ class LikedSongsPlaylistSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = LikedSongsPlaylist
-        fields = ('playlist_id', 'user_id')
+        fields = ( 'user_id')

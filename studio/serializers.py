@@ -38,7 +38,7 @@ class StudioEpisodeSerializer(serializers.ModelSerializer):
             title=self.validated_data['title'],
             description=self.validated_data['description'],
             podcast=self.context['podcast'],
-            file=self.validated_data['file'],
+            file=self.context['file'],
         )
 
         episode.save()

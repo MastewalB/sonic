@@ -11,7 +11,7 @@ csv_file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data',
 
 songs = pd.read_csv(csv_file_path)
 
-songs = songs.drop('link', axis=1).reset_index(drop=True)
+# songs = songs.drop('link', axis=1).reset_index(drop=True)
 
 # cleaning the data
 songs['text'] = songs['text'].str.replace(r'\n', '', regex=True)
